@@ -14,7 +14,7 @@ Repositorio exclusivo: https://github.com/eurocl/noir-inventario. Servicio de Re
 - PUT /internal/stock/:id: inicializa existencias con body {stock}, sin sobrescribir cantidades existentes.
 - DELETE /internal/stock/:id: elimina el registro de inventario.
 
-Las escrituras internas requieren X-Service-Key, con el secreto compartido únicamente con Productos. npm test verifica permisos, consultas, validaciones e inicialización idempotente mediante repositorios simulados, sin modificar MongoDB.
+Las escrituras internas requieren X-Service-Key, con el secreto compartido únicamente con Productos. 
 
 ## Arranque
 
