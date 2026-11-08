@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { createApi } from "./runtime.js";
 import { internalAuth } from "./internal-auth.js";
+import { mountPurchases } from './purchases.js';
 
 // _id is the product ID. Quantities belong exclusively to this database.
 const inventorySchema = new mongoose.Schema({ stock: { type: Number, required: true, min: 0, validate: Number.isSafeInteger } });
@@ -8,6 +9,7 @@ export const Inventory = mongoose.model("Inventory", inventorySchema, "inventory
 
 export function createStockApp() {
   const app = createApi("stock");
+  mountPurchases(app, Inventory);
   app.param("id", (req, res, next, id) => {
     if (!mongoose.isObjectIdOrHexString(id)) return res.status(400).json({ message: "Identificador de producto inválido" });
     next();

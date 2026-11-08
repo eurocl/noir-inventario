@@ -42,6 +42,7 @@ export async function startApi(app, { name, port, uri, dbName, dependencies = []
     const listener = listenOptions(port);
     if (process.env.MONGO_DNS_SERVERS) dns.setServers(process.env.MONGO_DNS_SERVERS.split(",").map(value => value.trim()));
     await mongoose.connect(uri, { dbName, serverSelectionTimeoutMS: 10000 });
+    await Promise.all(Object.values(mongoose.models).map(model => model.init()));
     const server = app.listen(listener.port, listener.host, () => console.log(`${name}: ${listener.host}:${listener.port}`));
     server.on("error", async () => {
       console.error(`${name}: no se pudo abrir el puerto ${port}`);
