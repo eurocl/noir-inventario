@@ -19,7 +19,17 @@ export function createApi(name) {
     const ready = mongoose.connection.readyState === 1;
     res.status(ready ? 200 : 503).json({ service: name, ready });
   });
-  app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 100 }));
+  // Server-to-server reads share an IP: browsing must not exhaust the write quota.
+  const readOnly = req => req.method === "GET" || req.method === "HEAD";
+  const message = { message: "Demasiadas solicitudes. Intentá nuevamente en unos minutos." };
+  app.use(rateLimit({
+    windowMs: 60 * 1000, limit: 600, skip: req => !readOnly(req),
+    standardHeaders: "draft-7", legacyHeaders: false, message,
+  }));
+  app.use(rateLimit({
+    windowMs: 15 * 60 * 1000, limit: 100, skip: readOnly,
+    standardHeaders: "draft-7", legacyHeaders: false, message,
+  }));
   return app;
 }
 
